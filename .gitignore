@@ -1,0 +1,7 @@
+node_modules/
+dist/
+out/
+*.vsix
+.DS_Store
+# 抓栈产物（若开启 captureToWorkspace）
+resource-monitor-captures/

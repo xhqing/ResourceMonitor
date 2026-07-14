@@ -1,0 +1,84 @@
+{
+  "name": "resource-monitor",
+  "displayName": "Resource Monitor",
+  "description": "实时监控 VSCode 渲染进程 CPU，超阈值告警并一键抓取调用栈，定位 V8/GC、Blink 重绘或扩展 webview 热点。",
+  "version": "0.0.1",
+  "publisher": "xhqing",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "main": "./dist/extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "resourceMonitor.start",
+        "title": "开始监控",
+        "category": "Resource Monitor"
+      },
+      {
+        "command": "resourceMonitor.stop",
+        "title": "停止监控",
+        "category": "Resource Monitor"
+      },
+      {
+        "command": "resourceMonitor.sampleTopProcess",
+        "title": "抓取最吃 CPU 的渲染进程",
+        "category": "Resource Monitor"
+      },
+      {
+        "command": "resourceMonitor.openCaptures",
+        "title": "打开抓栈产物目录",
+        "category": "Resource Monitor"
+      }
+    ],
+    "configuration": {
+      "title": "Resource Monitor",
+      "properties": {
+        "resourceMonitor.threshold": {
+          "type": "number",
+          "default": 100,
+          "minimum": 1,
+          "description": "触发告警的 CPU 百分比阈值（针对单个渲染进程）。"
+        },
+        "resourceMonitor.interval": {
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "description": "巡检间隔（秒）。"
+        },
+        "resourceMonitor.sampleDuration": {
+          "type": "number",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 30,
+          "description": "抓取调用栈的采样时长（秒）。"
+        },
+        "resourceMonitor.alertCooldown": {
+          "type": "number",
+          "default": 30,
+          "minimum": 0,
+          "description": "同一进程两次告警之间的冷却时间（秒），避免轰炸。"
+        },
+        "resourceMonitor.captureToWorkspace": {
+          "type": "boolean",
+          "default": false,
+          "description": "抓栈产物存到工作区目录（./resource-monitor-captures）。默认存扩展私有目录，不污染工作区。"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.80.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}
