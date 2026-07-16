@@ -1,72 +1,93 @@
+<div align="center">
+
+<img src="assets/logo.svg" width="640" alt="Resource Monitor logo" />
+
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-19C37D)
+![Type](https://img.shields.io/badge/Type-VSCode%20Extension-0078D4)
+
+</div>
+
 # Resource Monitor
 
-> VSCode 扩展：实时监控渲染进程 CPU，超阈值告警并一键抓取调用栈，定位 V8/GC、Blink 重绘或扩展 webview 热点。
+> VSCode extension that monitors renderer-process CPU in real time, alerts on threshold breach, and captures call stacks in one click to pinpoint V8/GC, Blink repaint, or extension webview hotspots.
 
-## 为什么需要
+[中文](README_cn.md)
 
-8GB 内存的小机器跑 VSCode（或 Trae 等 fork）偶尔卡顿，元凶往往在「渲染进程」之间游走——一会儿这个 renderer 飙到 200%，一会儿换另一个。本扩展持续盯住所有渲染进程，谁飙高就告警并抓栈，让卡顿可被归因。
+## Why
 
-## 功能
+Small machines with 8GB RAM running VSCode (or forks like Trae) occasionally stutter, and the culprit often roams across renderer processes — one renderer spikes to 200%, then another. This extension keeps watch over all renderer processes, alerts and captures stacks from whichever spikes, so the stuttering can be attributed.
 
-- **状态栏实时显示**：当前最吃 CPU 的渲染进程（`编辑器:PID CPU%`）
-- **超阈值告警**：单个渲染进程 CPU 超过阈值时弹通知，可一键抓栈
-- **一键抓栈**：调用 macOS `sample` 抓取目标进程调用栈，写入文件
-- **冷却节流**：同一进程在冷却时间内不重复告警，避免轰炸
+## Features
 
-## 平台要求
+- **Live status bar**: the most CPU-hungry renderer (`Editor:PID CPU%`)
+- **Threshold alerts**: notify when a single renderer's CPU exceeds the threshold, with one-click stack capture
+- **One-click stack capture**: invokes macOS `sample` to capture the target process's call stack to a file
+- **Cooldown throttling**: no repeated alerts for the same process within the cooldown window
 
-- **macOS**（依赖 `ps` 与 `sample`）
-- `sample` 命令需 Xcode 命令行工具：`xcode-select --install`
+## Platform requirements
 
-## 快速开始（开发调试）
+- **macOS** (depends on `ps` and `sample`)
+- `sample` requires Xcode Command Line Tools: `xcode-select --install`
+
+## Quick start (development)
 
 ```bash
 npm install
-npm run build      # 或 npm run watch 持续构建
-# 在 VSCode 里按 F5 打开扩展开发宿主窗口
+npm run build      # or npm run watch for continuous build
+# In VSCode, press F5 to open the Extension Development Host
 ```
 
-打包成 `.vsix` 安装：
+Package as `.vsix` and install:
 
 ```bash
 npm install -g @vscode/vsce
 npm run package
-# 在 VSCode「扩展 → 从 VSIX 安装」选择 dist/*.vsix
+# In VSCode: "Extensions → Install from VSIX", pick dist/*.vsix
 ```
 
-## 命令
+## Commands
 
-| 命令 | 说明 |
+| Command | Description |
 |---|---|
-| Resource Monitor: 开始监控 | 启动巡检 |
-| Resource Monitor: 停止监控 | 停止巡检 |
-| Resource Monitor: 抓取最吃 CPU 的渲染进程 | 手动抓栈（状态栏点击同此） |
-| Resource Monitor: 打开抓栈产物目录 | 在 Finder 中打开 |
+| Resource Monitor: Start Monitoring | Start polling |
+| Resource Monitor: Stop Monitoring | Stop polling |
+| Resource Monitor: Sample top CPU renderer | Manual stack capture (same as status bar click) |
+| Resource Monitor: Open captures folder | Open in Finder |
 
-## 配置
+## Configuration
 
-| 项 | 默认 | 说明 |
+| Option | Default | Description |
 |---|---|---|
-| `resourceMonitor.threshold` | `100` | 触发告警的 CPU% 阈值 |
-| `resourceMonitor.interval` | `3` | 巡检间隔（秒） |
-| `resourceMonitor.sampleDuration` | `3` | 抓栈时长（秒） |
-| `resourceMonitor.alertCooldown` | `30` | 同进程告警冷却（秒） |
-| `resourceMonitor.captureToWorkspace` | `false` | 抓栈产物是否写工作区目录（`./resource-monitor-captures`） |
+| `resourceMonitor.threshold` | `100` | CPU% threshold to trigger an alert |
+| `resourceMonitor.interval` | `3` | Polling interval (seconds) |
+| `resourceMonitor.sampleDuration` | `3` | Stack sampling duration (seconds) |
+| `resourceMonitor.alertCooldown` | `30` | Per-process alert cooldown (seconds) |
+| `resourceMonitor.captureToWorkspace` | `false` | Write captures to a workspace folder (`./resource-monitor-captures`) |
 
-## 抓栈结果怎么读
+## Reading capture results
 
-打开 capture 文件，看 `Sort by: cpu` 的热点函数前缀：
+Open the capture file and look at the `Sort by: cpu` hot function prefixes:
 
-- `v8::` / `CollectGarbage` / `Heap` → **V8 GC 风暴**（通常指向内存压力）
-- `blink::` / `Paint` / `Layout` / `Compositing` → **Blink 重绘/重排**（webview 频繁刷新、大文件、复杂装饰）
-- 出现特定扩展名 → 锁定到该扩展
+- `v8::` / `CollectGarbage` / `Heap` → **V8 GC storm** (usually points to memory pressure)
+- `blink::` / `Paint` / `Layout` / `Compositing` → **Blink repaint/reflow** (frequent webview refresh, large files, complex decorations)
+- A specific extension name → pinpoints that extension
 
-## 实现要点
+## Implementation notes
 
-- `src/monitor.ts`：`ps` 巡检循环 + 状态栏
-- `src/alerter.ts`：带冷却的告警（按 pid 记忆）
-- `src/sampler.ts`：调用 `sample` 抓栈并落盘
+- `src/monitor.ts`: `ps` polling loop + status bar
+- `src/alerter.ts`: cooldown-aware alerts (per-pid memory)
+- `src/sampler.ts`: invokes `sample` to capture stacks and persist them
 
-## License
+## License & Attribution
 
-MIT
+Copyright (c) 2026 All Contributors. Licensed under the [MIT License](LICENSE.md).
+
+**Attribution**: If this project helps you, a ⭐ on GitHub and retaining the copyright notice are appreciated. In derived works, please credit "Resource Monitor (https://github.com/xhqing/ResourceMonitor)".
+
+**Citing this project**:
+
+```
+Resource Monitor — VSCode extension for renderer-process CPU monitoring.
+https://github.com/xhqing/ResourceMonitor
+```
