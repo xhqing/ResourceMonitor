@@ -6,6 +6,5 @@
     </linearGradient>
   </defs>
   <rect width="512" height="512" rx="112" fill="url(#g)"/>
-  <text x="256" y="296" text-anchor="middle" font-size="230" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🖥️</text>
-  <path d="M104 396 Q144 364 184 396 T264 396 T344 396 T424 396" stroke="#ffffff" stroke-opacity="0.7" stroke-width="14" fill="none" stroke-linecap="round"/>
+  <text x="256" y="256" text-anchor="middle" dominant-baseline="central" font-size="380" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🖥️</text>
 </svg>
