@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.svg" width="640" alt="Resource Monitor logo" />
+<img src="assets/logo.png" width="640" alt="Resource Monitor logo" />
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-19C37D)

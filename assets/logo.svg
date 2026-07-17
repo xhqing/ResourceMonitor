@@ -5,8 +5,8 @@
       <stop offset="100%" stop-color="#005A9E"/>
     </linearGradient>
   </defs>
-  <rect width="640" height="200" rx="28" fill="url(#g)"/>
-  <text x="68" y="132" font-size="110">🖥️</text>
-  <text x="405" y="95" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="50" font-weight="700" fill="#ffffff">Resource Monitor</text>
-  <text x="405" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#ffffff" fill-opacity="0.9">VSCode Extension</text>
+  <rect x="16" y="20" width="608" height="160" rx="40" fill="url(#g)"/>
+  <text x="76" y="128" font-size="92" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">🖥️</text>
+  <text x="408" y="92" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="42" font-weight="700" fill="#ffffff">Resource Monitor</text>
+  <text x="408" y="122" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="500" fill="#ffffff" fill-opacity="0.9">VSCode Extension</text>
 </svg>

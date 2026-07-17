@@ -9,6 +9,12 @@ export interface SampleTarget {
   editor: string;
 }
 
+// macOS 系统自带的 sample 工具固定位于 /usr/bin/sample（属于 Xcode 命令行工具）。
+// 直接用绝对路径调用，避免 PATH 中排在 /usr/bin 之前的同名命令抢占——
+// 例如 Homebrew 装的某些 Python 包会在 /opt/homebrew/bin/sample 生成同名入口，
+// 其内容是 `from sample import main`，被误调时会抛 ModuleNotFoundError。
+const SAMPLE_BIN = fs.existsSync('/usr/bin/sample') ? '/usr/bin/sample' : 'sample';
+
 // 解析抓栈产物目录：默认扩展私有存储；可选写到工作区 ./resource-monitor-captures
 export function resolveCaptureDir(context: vscode.ExtensionContext): string {
   const cfg = vscode.workspace.getConfiguration('resourceMonitor');
@@ -32,9 +38,9 @@ export async function sampleProcess(context: vscode.ExtensionContext, t: SampleT
 
   vscode.window.showInformationMessage(`正在抓取 PID ${t.pid} 的调用栈（${dur}s）…`);
   await new Promise<void>((resolve) => {
-    cp.execFile('sample', [String(t.pid), String(dur), '-file', file], (err) => {
+    cp.execFile(SAMPLE_BIN, [String(t.pid), String(dur), '-file', file], (err) => {
       if (err) {
-        vscode.window.showErrorMessage(`抓栈失败：${err.message}（确认已安装 Xcode 命令行工具：xcode-select --install）`);
+        vscode.window.showErrorMessage(`抓栈失败：${err.message}（使用 ${SAMPLE_BIN}；若该路径不存在，请安装 Xcode 命令行工具：xcode-select --install）`);
       } else {
         vscode.window.showInformationMessage(`抓栈完成：${file}`, '打开').then((c) => {
           if (c === '打开') {
