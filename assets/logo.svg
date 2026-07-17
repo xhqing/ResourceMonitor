@@ -7,6 +7,6 @@
   </defs>
   <rect width="640" height="200" rx="28" fill="url(#g)"/>
   <text x="68" y="132" font-size="110">🖥️</text>
-  <text x="185" y="95" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="50" font-weight="700" fill="#ffffff">Resource Monitor</text>
-  <text x="187" y="132" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#ffffff" fill-opacity="0.9">VSCode Extension · 整机系统资源监控</text>
+  <text x="405" y="95" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="50" font-weight="700" fill="#ffffff">Resource Monitor</text>
+  <text x="405" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#ffffff" fill-opacity="0.9">VSCode Extension</text>
 </svg>
