@@ -18,3 +18,12 @@ VSCode 扩展：实时监控渲染进程 CPU，超阈值告警并一键抓取调
 
 <!-- commit-skill: readme-link-text = ok -->
 - 英文版 README 跳转中文版链接文字：已统一为「简体中文」（2026-07-18 确认）
+
+<!-- commit-skill: github-about = ok -->
+- GitHub About：已配置（纯英文 description + 8 个 topics，2026-07-18）
+
+<!-- commit-skill: agent-persona = ok -->
+- Agent 拟人名：已写入 README（Custodian，2026-07-18）
+
+<!-- commit-skill: agent-llm = ok -->
+- Agent 大脑型号：已写入 README（GLM-5.2 · z.ai，2026-07-18）
