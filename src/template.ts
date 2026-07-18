@@ -87,9 +87,9 @@ export function buildHtml(data: HtmlData): string {
   <h2>AI 清理建议</h2>
   <div style="margin-bottom:10px">
     <button id="diagnose">立即诊断</button>
-    <button id="clean" hidden>清理勾选</button>
   </div>
-  <div id="suggestions"><span class="placeholder">点击「立即诊断」，AI 会依据上面的资源数据给出可勾选的清理建议。勾选后点「清理勾选」。</span></div>
+  <div id="suggestions"><span class="placeholder">点击「立即诊断」，AI 会依据上面的资源数据给出可勾选的清理建议。勾选后点下方「清理勾选」。</span></div>
+  <button id="clean" hidden style="margin-top:10px">清理勾选</button>
   <div id="cleanResults" style="margin-top:10px"></div>
 </section>
 

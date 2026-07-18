@@ -2,7 +2,7 @@
   "name": "resource-monitor",
   "displayName": "Resource Monitor",
   "description": "实时监控整机 CPU、内存、磁盘、GPU，AI 给出可勾选的清理建议并一键执行。",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "xhqing",
   "license": "MIT",
   "repository": {
@@ -57,16 +57,11 @@
       "resourceMonitor": [
         {
           "id": "resourceMonitor.entry",
-          "name": "资源监控"
+          "name": "资源监控",
+          "type": "webview"
         }
       ]
     },
-    "viewsWelcome": [
-      {
-        "view": "resourceMonitor.entry",
-        "contents": "打开资源监控面板，查看整机 CPU / 内存 / 磁盘 / GPU 与 AI 清理建议。\n[打开资源监控面板](command:resourceMonitor.openPanel)"
-      }
-    ],
     "configuration": {
       "title": "Resource Monitor",
       "properties": {

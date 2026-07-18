@@ -11,7 +11,12 @@ let extContext: vscode.ExtensionContext | undefined;
 // 扩展激活入口：创建面板与监控器，注册命令，自动开始监控。
 export function activate(context: vscode.ExtensionContext) {
   extContext = context;
-  panel = new PanelController(context, () => void diagnose());
+  panel = new PanelController(() => void diagnose());
+
+  // 注册侧边栏视图：点活动栏图标即展开资源监控面板，无需再点「打开」按钮。
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider('resourceMonitor.entry', panel),
+  );
 
   const m = new Monitor(() => panel?.show(monitor?.lastSnapshot));
   monitor = m;
@@ -20,6 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand('resourceMonitor.openPanel', async () => {
       const snap = await m.sampleOnce();
+      await panel?.reveal();
       panel?.show(snap);
     }),
     vscode.commands.registerCommand('resourceMonitor.start', () => {

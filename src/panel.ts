@@ -6,50 +6,65 @@ import { buildHtml } from './template';
 import { CleanerSuggestion } from './ai/types';
 import { executeClean, CleanResult } from './cleaner';
 
-// 独立大面板（编辑器区 Webview Panel），单例：整机仪表盘 + 阈值/告警间隔可调 + AI 清理建议 + 勾选执行。
-export class PanelController {
-  private panel: vscode.WebviewPanel | undefined;
+// 侧边栏 WebviewView（活动栏点图标即展开，不再走中央编辑器面板）：
+// 整机仪表盘 + 阈值/告警间隔可调 + AI 清理建议 + 勾选执行。
+// 视图未展开时，扩展端缓存最新快照/建议，等 resolve 时刷进去，避免开屏空白。
+export class PanelController implements vscode.WebviewViewProvider {
+  private view: vscode.WebviewView | undefined;
+  private lastSnapshot: Snapshot | undefined;
   private suggestions: CleanerSuggestion[] = [];
 
-  constructor(
-    private readonly context: vscode.ExtensionContext,
-    private readonly onDiagnose: () => void,
-  ) {}
+  constructor(private readonly onDiagnose: () => void) {}
 
-  show(initial?: Snapshot) {
-    if (this.panel) {
-      this.panel.reveal(vscode.ViewColumn.Active);
-    } else {
-      const cfg = readConfig();
-      this.panel = vscode.window.createWebviewPanel(
-        'resourceMonitorPanel',
-        '资源监控',
-        vscode.ViewColumn.Active,
-        { enableScripts: true, retainContextWhenHidden: true },
-      );
-      this.panel.iconPath = vscode.Uri.joinPath(this.context.extensionUri, 'assets', 'icon.png');
-      this.panel.webview.html = buildHtml({
-        thresholds: cfg.thresholds,
-        cooldown: cfg.alertCooldownSec,
-        nonce: getNonce(),
-      });
-      this.panel.webview.onDidReceiveMessage((msg: PanelMessage) => this.handleMessage(msg));
-      this.panel.onDidDispose(() => {
-        this.panel = undefined;
-      });
+  // VSCode 在视图首次显示（用户点活动栏图标展开，或命令面板触发 focus）时调用一次。
+  resolveWebviewView(webviewView: vscode.WebviewView): void {
+    this.view = webviewView;
+    webviewView.webview.options = { enableScripts: true };
+    const cfg = readConfig();
+    webviewView.webview.html = buildHtml({
+      thresholds: cfg.thresholds,
+      cooldown: cfg.alertCooldownSec,
+      nonce: getNonce(),
+    });
+    webviewView.webview.onDidReceiveMessage((msg: PanelMessage) => this.handleMessage(msg));
+    webviewView.onDidDispose(() => {
+      this.view = undefined;
+    });
+
+    // 把扩展端缓存的最新数据刷进去，保证开屏即有内容。
+    if (this.lastSnapshot) {
+      webviewView.webview.postMessage({ type: 'snapshot', snap: this.lastSnapshot });
     }
+    if (this.suggestions.length) {
+      webviewView.webview.postMessage({ type: 'suggestions', items: this.suggestions });
+    }
+  }
+
+  // 由 openPanel 命令调用：展开/聚焦本侧边栏视图，并刷新一帧最新数据。
+  show(initial?: Snapshot) {
     if (initial) {
+      this.lastSnapshot = initial;
       this.update(initial);
     }
   }
 
+  // 命令面板「打开资源面板」入口：确保视图可见（未 resolve 时触发 focus 命令展开）。
+  async reveal() {
+    if (this.view) {
+      this.view.show?.(true);
+    } else {
+      await vscode.commands.executeCommand(`${VIEW_ID}.focus`);
+    }
+  }
+
   update(snap: Snapshot) {
-    this.panel?.webview.postMessage({ type: 'snapshot', snap });
+    this.lastSnapshot = snap;
+    this.view?.webview.postMessage({ type: 'snapshot', snap });
   }
 
   setSuggestions(items: CleanerSuggestion[]) {
     this.suggestions = items;
-    this.panel?.webview.postMessage({ type: 'suggestions', items });
+    this.view?.webview.postMessage({ type: 'suggestions', items });
   }
 
   private handleMessage(msg: PanelMessage) {
@@ -85,11 +100,13 @@ export class PanelController {
       results.push(await executeClean(s));
     }
 
-    this.panel?.webview.postMessage({ type: 'cleanResults', results });
+    this.view?.webview.postMessage({ type: 'cleanResults', results });
     const ok = results.filter((r) => r.success).length;
     void vscode.window.showInformationMessage(`清理完成：成功 ${ok}/${results.length} 项，详见面板。`);
   }
 }
+
+const VIEW_ID = 'resourceMonitor.entry';
 
 type PanelMessage =
   | { type: 'updateThreshold'; key: string; value: number }
