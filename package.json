@@ -35,7 +35,7 @@
       },
       {
         "command": "resourceMonitor.diagnose",
-        "title": "立即诊断（AI 清理建议）",
+        "title": "立即诊断（AI 诊断与清理建议）",
         "category": "Resource Monitor"
       },
       {

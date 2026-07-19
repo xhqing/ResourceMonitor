@@ -7,7 +7,7 @@ import { CleanerSuggestion } from './ai/types';
 import { executeClean, CleanResult } from './cleaner';
 
 // 侧边栏 WebviewView（活动栏点图标即展开，不再走中央编辑器面板）：
-// 整机仪表盘 + 阈值/告警间隔可调 + AI 清理建议 + 勾选执行。
+// 整机仪表盘 + 阈值/告警间隔可调 + AI 诊断与清理建议 + 勾选执行。
 // 视图未展开时，扩展端缓存最新快照/建议，等 resolve 时刷进去，避免开屏空白。
 export class PanelController implements vscode.WebviewViewProvider {
   private view: vscode.WebviewView | undefined;

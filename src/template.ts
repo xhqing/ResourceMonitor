@@ -79,7 +79,7 @@ export function buildHtml(data: HtmlData): string {
 </section>
 
 <section>
-  <h2>AI 清理建议</h2>
+  <h2>AI 诊断与清理建议</h2>
   <div style="margin-bottom:10px">
     <button id="diagnose">立即诊断</button>
   </div>
