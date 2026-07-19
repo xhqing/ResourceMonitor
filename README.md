@@ -10,7 +10,7 @@
 
 # Resource Monitor
 
-> VSCode extension that monitors your whole Mac (CPU / memory / disk / GPU), uses AI to turn the numbers into checkable cleanup actions (uninstall an extension, clear a cache, kill a process), and executes the ones you pick — safely.
+> VSCode extension that monitors your whole Mac (CPU / memory / disk), uses AI to turn the numbers into checkable cleanup actions (uninstall an extension, clear a cache, kill a process), and executes the ones you pick — safely.
 
 [简体中文](README_cn.md)
 
@@ -20,7 +20,7 @@ Small Macs (8 GB RAM) stutter under VSCode / Trae, and the culprit roams across 
 
 ## Features
 
-- **Whole-machine dashboard**: live CPU / memory / disk / GPU, plus top processes — in an editor-side panel
+- **Whole-machine dashboard**: live CPU / memory / disk, plus top processes — in an editor-side panel
 - **AI cleanup suggestions**: send the snapshot to your model (z.ai / GLM via the Anthropic-compatible endpoint, or any OpenAI-compatible endpoint), get back a checkable list of actions with reasons, risk levels, and ready-to-run commands
 - **Tick and run, safely**: pick the suggestions you trust, confirm, and the extension executes them. Every command passes a strict allowlist (uninstall extension / clear a specific `globalStorage` cache / kill a pid); `rm -rf /`, pipe injection, and out-of-scope paths are refused
 - **Adjustable thresholds & alert cooldown**: tune CPU / memory / disk thresholds and the alert interval right in the panel, with suggested values and ranges
@@ -28,8 +28,7 @@ Small Macs (8 GB RAM) stutter under VSCode / Trae, and the culprit roams across 
 
 ## Platform requirements
 
-- **macOS** (uses built-in `top` / `ps` / `df` / `ioreg` / `system_profiler` — no `sudo`, no Xcode Command Line Tools)
-- Process-level GPU usage and GPU power are not readable without `sudo` — the panel marks them "unsupported" honestly rather than guessing
+- **macOS** (uses built-in `top` / `ps` / `df` / `memory_pressure` — no `sudo`, no Xcode Command Line Tools)
 
 ## Quick start (development)
 
@@ -64,7 +63,7 @@ npm run package
 | `resourceMonitor.alertCooldown` | `300` | Min seconds between alerts on the same metric (panel-adjustable) |
 | `resourceMonitor.threshold.cpuTotal` | `75` | Whole-machine CPU % that triggers an alert (above) |
 | `resourceMonitor.threshold.cpuProcess` | `80` | Single-process CPU % that triggers an alert (above) |
-| `resourceMonitor.threshold.memoryFree` | `20` | Free memory % that triggers an alert (below) |
+| `resourceMonitor.threshold.memoryUsed` | `80` | Memory usage % that triggers an alert (above) |
 | `resourceMonitor.threshold.diskUsed` | `85` | Disk usage % that triggers an alert (above) |
 | `resourceMonitor.ai.baseUrl` | `https://api.z.ai/api/anthropic` | AI endpoint base URL |
 | `resourceMonitor.ai.model` | `glm-5.2` | AI model id |
@@ -72,10 +71,9 @@ npm run package
 
 ## How it works
 
-- Collectors (`src/collectors/`) read CPU / memory / disk / GPU / VSCode processes via shell commands — zero runtime dependencies
+- Collectors (`src/collectors/`) read CPU / memory / disk / VSCode processes via shell commands — zero runtime dependencies
 - `src/ai/` calls your model directly (Node 18 `fetch`); the API key lives in `SecretStorage`, never in settings or logs
 - `src/cleaner.ts` is the safety gate: a command allowlist that refuses anything dangerous before execution
-- See [DESIGN.md](DESIGN.md) for the full design, capability boundaries, and safety model
 
 ## License & Attribution
 
