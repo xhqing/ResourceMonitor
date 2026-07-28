@@ -76,10 +76,10 @@ export class PanelController implements vscode.WebviewViewProvider {
     const cfg = vscode.workspace.getConfiguration('resourceMonitor');
     switch (msg.type) {
       case 'updateThreshold':
-        void cfg.update(`threshold.${msg.key}`, msg.value, vscode.ConfigurationTarget.Global);
+        void this.saveConfig(cfg, `threshold.${msg.key}`, msg.value);
         break;
       case 'updateCooldown':
-        void cfg.update('alertCooldown', msg.value, vscode.ConfigurationTarget.Global);
+        void this.saveConfig(cfg, 'alertCooldown', msg.value);
         break;
       case 'diagnose':
         this.onDiagnose();
@@ -87,6 +87,18 @@ export class PanelController implements vscode.WebviewViewProvider {
       case 'executeClean':
         void this.runClean(msg.commands);
         break;
+    }
+  }
+
+  // 把阈值 / 告警间隔写入用户级配置并持久化。关键：不能用 void 吞掉 update 的 Promise——
+  // 否则一旦写盘失败（或前端事件没触发到保存），用户拖完看到的是新值、重开又回旧值，且全程无任何报错。
+  private async saveConfig(cfg: vscode.WorkspaceConfiguration, key: string, value: number) {
+    try {
+      await cfg.update(key, value, vscode.ConfigurationTarget.Global);
+    } catch (e) {
+      const detail = (e as Error)?.message ?? String(e);
+      console.error(`[ResourceMonitor] 保存配置失败：${key}=${value} —— ${detail}`);
+      void vscode.window.showWarningMessage(`Resource Monitor：阈值未保存（${detail}）`);
     }
   }
 

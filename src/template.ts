@@ -97,11 +97,18 @@ export function buildHtml(data: HtmlData): string {
 
   document.querySelectorAll('input[type=range]').forEach((el) => {
     const out = el.parentElement.querySelector('.val');
-    const refresh = () => { if (out) out.textContent = el.value + (el.dataset.unit || ''); };
-    el.addEventListener('input', refresh); refresh();
-    el.addEventListener('change', () => {
+    const send = () => {
       vscode.postMessage({ type: el.dataset.kind === 'cooldown' ? 'updateCooldown' : 'updateThreshold', key: el.dataset.key, value: Number(el.value) });
+    };
+    let timer;
+    el.addEventListener('input', () => {
+      if (out) out.textContent = el.value + (el.dataset.unit || '');
+      // 拖动过程中停顿 400ms 即保存一次；松开时 change 也会保存。双重保障，避免 change 事件丢失导致漏存。
+      clearTimeout(timer);
+      timer = setTimeout(send, 400);
     });
+    if (out) out.textContent = el.value + (el.dataset.unit || '');
+    el.addEventListener('change', () => { clearTimeout(timer); send(); });
   });
   $('diagnose').addEventListener('click', () => vscode.postMessage({ type: 'diagnose' }));
   $('clean').addEventListener('click', () => {
