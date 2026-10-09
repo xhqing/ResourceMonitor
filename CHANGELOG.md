@@ -4,13 +4,17 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [0.2.3] - 2026-07-19
+## [0.2.3] - 2026-10-09
 
 统一 AI 面板标签为「AI 诊断与清理建议」，命令名、面板栏标题、中文文档措辞保持一致。
 
 ### Changed
 
 - **AI 面板标签统一为「AI 诊断与清理建议」**：命令 `resourceMonitor.diagnose` 的 title 从「立即诊断（AI 清理建议）」改为「立即诊断（AI 诊断与清理建议）」；面板内该栏的 `<h2>` 标题、源码注释、中文 README 措辞同步改为「AI 诊断与清理建议」，更准确反映该栏既做诊断、又给清理建议。
+
+- **措辞统一 fleet → team（`.claude/CLAUDE.md` 超集内容跟随权威源同步）**：用户 2026-08-21 裁定全量清零 fleet 旧措辞、统一为「团队 / team」（xhqing 主页 2026-08-16 已改，各仓跟随）——本仓 `.claude/CLAUDE.md` 内随附的 DeviceStewardAgent CLAUDE.md 全文按超集关系同步权威源的措辞改动（「fleet 项目名」→「团队项目名」等 3 处），diff 验证超集一致。
+
+- **纳入 DeviceStewardAgent（Alfred）子项目体系 + README 徽章对齐团队标准**：新建 DeviceStewardAgent（电脑管家 Agent Alfred，[xhqing/DeviceStewardAgent](https://github.com/xhqing/DeviceStewardAgent)）并确认本项目为其子项目——按全局规则「Agent 项目与子项目的 `.claude/` 超集关系」新建 `.claude/`（CLAUDE.md 附 Alfred 全文；Alfred 已于 2026-09-01 移除其 `.claude/` settings 文件，随附内容不含）；README（EN/CN）移除 `Built with Claude Code` 徽章（团队规范不含 LLM / 厂商徽章）、补 Version 徽章（取自 VERSION 文件）。
 
 ## [0.2.2] - 2026-07-19
 
