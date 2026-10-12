@@ -3,7 +3,7 @@
 <img src="assets/logo.png" width="640" alt="Resource Monitor logo" />
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Version](https://img.shields.io/badge/Version-0.2.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.2.4-blue.svg)
 ![Type](https://img.shields.io/badge/Type-VSCode%20Extension-0078D4)
 
 </div>
