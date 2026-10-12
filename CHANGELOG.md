@@ -4,6 +4,12 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### Changed
+
+- **移除智能体专属文件（根 `CLAUDE.md` 与 `.claude/`）**：2026-10-12 用户修订全局规则——`CLAUDE.md`、`AGENTS.md`、`.claude/`、项目级 `.pi/` 等智能体专属文件只有 Agent 项目允许拥有，非 Agent 项目（含子项目）一律不得存在（取代原「子项目 `.claude/` 超集」规则，细则见全局 `~/.claude/docs/agents-registry.md`「智能体专属文件归属与子项目映射（2026-10-12 修订）」节）——删除根 `CLAUDE.md`（旧格式 commit-skill 检测缓存，缓存载体已迁移为 `.commit-cache.md`，项目简介本就在 README）与 `.claude/CLAUDE.md`（DeviceStewardAgent CLAUDE.md 全文的随附副本）；本仓不再携带任何智能体专属文件，相关工作改由 DeviceStewardAgent 会话按路径跨目录进行。
+
 ## [0.2.3] - 2026-10-09
 
 统一 AI 面板标签为「AI 诊断与清理建议」，命令名、面板栏标题、中文文档措辞保持一致。
